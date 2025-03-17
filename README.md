@@ -52,13 +52,13 @@ SmartRedis-MPI has benefited from the expertise and support of many individuals 
 
 ### Research Collaborators
 We are grateful for the valuable discussions with:
-- **Francisco Alcántara Ávila**
-- **Di Zhou**
-- **Yuning Wang**
-- **Ting Zhu**
+- Francisco Alcántara Ávila
+- Di Zhou
+- Yuning Wang
+- Ting Zhu
 
 ### Academic Support
 Special thanks for the guidance and support provided by:
-- **Ricardo Vinuesa**
-- **Johan Larsson**
-- **Sergio Pirozzoli**
+- Ricardo Vinuesa
+- Johan Larsson
+- Sergio Pirozzoli
