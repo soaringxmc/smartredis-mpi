@@ -40,5 +40,8 @@ The library is functional and in active use. Development is ongoing to implement
 *Coming soon*
 
 ## Contributors
+SmartRedis-MPI is developed and maintained by a dedicated team of researchers and developers. We are grateful for the contributions of:
 
-*Coming soon*
+- **Maochao Xiao** ([@soaringxmc](https://github.com/soaringxmc)) - Code implementation and library design
+- **Bernat Font** ([@b-fg](https://github.com/b-fg)) - Library design
+- **Marius Kurz** ([@m-kurz](https://github.com/m-kurz)) - Library design
