@@ -45,3 +45,20 @@ SmartRedis-MPI is developed and maintained by a dedicated team of researchers an
 - **Maochao Xiao** ([@soaringxmc](https://github.com/soaringxmc)) - Code implementation and library design
 - **Bernat Font** ([@b-fg](https://github.com/b-fg)) - Library design
 - **Marius Kurz** ([@m-kurz](https://github.com/m-kurz)) - Library design
+
+## Acknowledgements
+
+SmartRedis-MPI has benefited from the expertise and support of many individuals in the computational fluid dynamics and high-performance computing communities.
+
+### Research Collaborators
+We are grateful for the valuable discussions with:
+- **Francisco Alcántara Ávila**
+- **Di Zhou**
+- **Yuning Wang**
+- **Ting Zhu**
+
+### Academic Support
+Special thanks for the guidance and support provided by:
+- **Ricardo Vinuesa**
+- **Johan Larsson**
+- **Sergio Pirozzoli**
