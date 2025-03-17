@@ -57,7 +57,6 @@ We are grateful for the valuable discussions with:
 - Yuning Wang
 - Ting Zhu
 
-### Academic Support
 Special thanks for the guidance and support provided by:
 - Ricardo Vinuesa
 - Johan Larsson
