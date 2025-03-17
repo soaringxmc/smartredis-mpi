@@ -21,7 +21,7 @@ MOD_DIR = $(BUILD_DIR)/include
 LIB_DIR = $(BUILD_DIR)/lib
 
 # Source files (adjust paths if necessary)
-SRCS = src/precision.f90 src/smartredis.f90
+SRCS = src/precision.f90 src/smartredis_mpi.f90
 OBJS = $(patsubst src/%.f90,$(OBJ_DIR)/%.o,$(SRCS))
 
 # Library names
