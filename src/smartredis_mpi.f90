@@ -14,11 +14,15 @@ module smartredis_mpi
   implicit none
 
   integer :: nprocs, myid, ierr
-  integer :: mpi_comm = MPI_COMM_WORLD ! default communicator in CFD simulations
+  integer :: mpi_comm_local ! default communicator in CFD simulations
   
   private
+
   public :: init_smartredis_mpi,finalize_smartredis_mpi, &
-            put_step_type,put_state,put_reward,get_action
+            put_step_type,put_state,put_reward,get_action, &
+            put_info ! YW added here
+
+  ! public :: init_smartredis_mpi
 
   type(CLIENT_TYPE) :: client
 
@@ -32,13 +36,13 @@ module smartredis_mpi
     logical :: is_error
     
     if (present(comm)) then
-      mpi_comm = comm
+      mpi_comm_local = comm
     else
-      mpi_comm = MPI_COMM_WORLD
+      mpi_comm_local = MPI_COMM_WORLD
     end if
     
-    call MPI_Comm_rank(mpi_comm, myid, ierr)
-    call MPI_Comm_size(mpi_comm, nprocs, ierr)
+    call MPI_Comm_rank(mpi_comm_local, myid, ierr)
+    call MPI_Comm_size(mpi_comm_local, nprocs, ierr)
 
     if(myid == 0) then
       error = client%initialize(db_clustered)
@@ -75,7 +79,7 @@ module smartredis_mpi
     allocate(state_sizes(nprocs))
     call MPI_GATHER(state_size,1,MPI_INTEGER, &
                     state_sizes,1,MPI_INTEGER, &
-                      0,mpi_comm,ierr)
+                      0,mpi_comm_local,ierr)
 
     allocate(state_displs(nprocs))
     if(myid == 0) then
@@ -90,7 +94,7 @@ module smartredis_mpi
 
     call MPI_GATHERV(state,state_size,MPI_REAL_RP, &
                      state_global,state_sizes,state_displs,MPI_REAL_RP, &
-                       0,mpi_comm,ierr)
+                       0,mpi_comm_local,ierr)
 
     if(myid == 0) then
       print *, 'putting state tensor'
@@ -116,7 +120,7 @@ module smartredis_mpi
     allocate(reward_sizes(nprocs))
     call MPI_GATHER(reward_size,1,MPI_INTEGER, &
                     reward_sizes,1,MPI_INTEGER, &
-                      0,mpi_comm,ierr)
+                      0,mpi_comm_local,ierr)
 
     allocate(reward_displs(nprocs))
     if(myid == 0) then
@@ -131,7 +135,7 @@ module smartredis_mpi
 
     call MPI_GATHERV(reward,reward_size,MPI_REAL_RP, &
                      reward_global,reward_sizes,reward_displs,MPI_REAL_RP, &
-                       0,mpi_comm,ierr)
+                       0,mpi_comm_local,ierr)
 
     if(myid == 0) then
       print *, 'putting reward tensor'
@@ -158,7 +162,7 @@ module smartredis_mpi
     allocate(action_sizes(nprocs))
     call MPI_GATHER(action_size ,1,MPI_INTEGER, &
                     action_sizes,1,MPI_INTEGER, &
-                      0,mpi_comm,ierr)
+                      0,mpi_comm_local,ierr)
 
     allocate(action_displs(nprocs))
     if(myid == 0) then
@@ -188,8 +192,74 @@ module smartredis_mpi
 
     call MPI_SCATTERV(action_global,action_sizes,action_displs,MPI_REAL_RP, &
                       action,action_size,MPI_REAL_RP, &
-                        0,mpi_comm,ierr)
+                        0,mpi_comm_local,ierr)
   end subroutine get_action
+
+  ! YW Add here for integer transfer: 
+  subroutine put_info(key,dims,info)
+    implicit none
+    character(len=*), intent(in) :: key
+    integer, intent(in), dimension(:) :: dims
+    integer, intent(in), dimension(product(dims)) :: info
+    integer, dimension(:), allocatable :: info_sizes,info_displs
+    integer, dimension(:), allocatable :: info_global
+    integer :: info_size,info_global_size,counter,i,error
+    logical :: is_error
+
+    info_size = product(dims)
+
+    allocate(info_sizes(nprocs))
+    call MPI_GATHER(info_size,1,MPI_INTEGER, &
+                    info_sizes,1,MPI_INTEGER, &
+                      0,mpi_comm_local,ierr)
+
+    allocate(info_displs(nprocs))
+    if(myid == 0) then
+      counter = 0
+      do i = 1,nprocs
+        info_displs(i) = counter
+        counter = counter + info_sizes(i)
+      end do
+      info_global_size = counter
+    end if
+    allocate(info_global(info_global_size))
+
+    call MPI_GATHERV(info,info_size,MPI_INTEGER, &
+                     info_global,info_sizes,info_displs,MPI_INTEGER, &
+                       0,mpi_comm_local,ierr)
+
+    if(myid == 0) then
+      print *, 'putting info tensor'
+      error = client%put_tensor(key,info_global,shape(info_global))
+      is_error = client%SR_error_parser(error)
+      if(is_error) stop 'Error in SmartRedis send_state.'
+    end if
+  end subroutine put_info
+  !
+
+
+  ! YW Add here for time  transfer: 
+  subroutine put_real_scalar(key,dims,rscalar)
+    implicit none
+    character(len=*), intent(in) :: key
+    integer, intent(in), dimension(:) :: dims
+    real(rp), intent(in), dimension(product(dims)) :: rscalar
+    integer :: rs_size,rs_global_size,counter,i,error
+    logical :: is_error
+
+    rs_size = product(dims)
+
+    if(myid == 0) then
+      print *, 'putting a real scalar'
+      error = client%put_tensor(key,rscalar,shape(rscalar))
+      is_error = client%SR_error_parser(error)
+      if(is_error) stop 'Error in SmartRedis put_real_scalar.'
+    end if
+  end subroutine put_real_scalar
+  !
+
+
+
 
   subroutine finalize_smartredis_mpi()
     implicit none
