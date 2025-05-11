@@ -17,7 +17,7 @@ module smartredis_mpi
 
   public :: init_smartredis_mpi,finalize_smartredis_mpi, &
             put_step_type,put_state,put_reward,get_action, &
-            put_info
+            put_info,put_real_scalar
 
   type(CLIENT_TYPE) :: client
 
