@@ -43,6 +43,7 @@ The library is functional and in active use. Development is ongoing to implement
 SmartRedis-MPI is developed and maintained by a dedicated team of researchers and developers. We are grateful for the contributions of:
 
 - **Maochao Xiao** ([@soaringxmc](https://github.com/soaringxmc)) - Code implementation and library design
+- **Yuning Wang** ([@fantasy98](https://github.com/Fantasy98)) - Code implementation
 - **Bernat Font** ([@b-fg](https://github.com/b-fg)) - Library design
 - **Marius Kurz** ([@m-kurz](https://github.com/m-kurz)) - Library design
 
@@ -54,7 +55,7 @@ SmartRedis-MPI has benefited from the expertise and support of many individuals 
 We are grateful for the valuable discussions with:
 - Francisco Alcántara Ávila
 - Di Zhou
-- Yuning Wang
+- Pol Suárez Morales
 - Ting Zhu
 
 Special thanks for the guidance and support provided by:

@@ -1,7 +1,6 @@
 ! -
 !
-! SPDX-FileCopyrightText: Copyright (c) 2017-2022 Pedro Costa and the CaNS contributors.
-! SPDX-FileCopyrightText: Modifications Copyright (c) 2023-2024 Maochao Xiao and the CaLES contributors.
+! SPDX-FileCopyrightText: Copyright (c) 2024-2025 SmartRedis-MPI contributors.
 ! SPDX-License-Identifier: MIT
 !
 ! -

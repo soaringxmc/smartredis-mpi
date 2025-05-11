@@ -1,12 +1,9 @@
-! Note the below macros are here to allow compilation with Nvidia drivers
-! While assumed size should be sufficient, this does not seem to work with
-! Intel and GNU (however those have support for assumed rank)
-#if defined (_NVCOMPILER)
-#define DIM_RANK_SPEC dimension(*)
-#else
-#define DIM_RANK_SPEC dimension(..)
-#endif
-
+! -
+!
+! SPDX-FileCopyrightText: Copyright (c) 2024-2025 SmartRedis-MPI contributors.
+! SPDX-License-Identifier: MIT
+!
+! -
 module smartredis_mpi
   use mpi
   use precision, only: rp,MPI_REAL_RP
@@ -14,15 +11,13 @@ module smartredis_mpi
   implicit none
 
   integer :: nprocs, myid, ierr
-  integer :: mpi_comm_local ! default communicator in CFD simulations
+  integer :: mpi_comm_local
   
   private
 
   public :: init_smartredis_mpi,finalize_smartredis_mpi, &
             put_step_type,put_state,put_reward,get_action, &
-            put_info ! YW added here
-
-  ! public :: init_smartredis_mpi
+            put_info
 
   type(CLIENT_TYPE) :: client
 
@@ -104,7 +99,6 @@ module smartredis_mpi
     end if
   end subroutine put_state
   !
-
   subroutine put_reward(key,dims,reward)
     implicit none
     character(len=*), intent(in) :: key
@@ -150,8 +144,8 @@ module smartredis_mpi
     character(len=*), intent(in) :: key
     integer, intent(in), dimension(:) :: dims
     real(rp), intent(out), dimension(product(dims)) :: action
-    integer, parameter :: interval = 10 ! polling interval in ms
-    integer, parameter :: tries = 10000 ! number of polling tries
+    integer, parameter :: interval = 10  ! polling interval in ms
+    integer, parameter :: tries = 200000 ! number of polling tries
     integer, dimension(:), allocatable :: action_sizes,action_displs
     real(rp), dimension(:), allocatable :: action_global
     integer :: action_size,action_global_size,counter,i,error
@@ -195,8 +189,8 @@ module smartredis_mpi
                         0,mpi_comm_local,ierr)
   end subroutine get_action
 
-  ! YW Add here for integer transfer: 
   subroutine put_info(key,dims,info)
+    ! Transfer integer values
     implicit none
     character(len=*), intent(in) :: key
     integer, intent(in), dimension(:) :: dims
@@ -226,7 +220,7 @@ module smartredis_mpi
 
     call MPI_GATHERV(info,info_size,MPI_INTEGER, &
                      info_global,info_sizes,info_displs,MPI_INTEGER, &
-                       0,mpi_comm_local,ierr)
+                     0,mpi_comm_local,ierr)
 
     if(myid == 0) then
       print *, 'putting info tensor'
@@ -235,11 +229,9 @@ module smartredis_mpi
       if(is_error) stop 'Error in SmartRedis send_state.'
     end if
   end subroutine put_info
-  !
-
-
-  ! YW Add here for time  transfer: 
+  
   subroutine put_real_scalar(key,dims,rscalar)
+    ! Trasfer time
     implicit none
     character(len=*), intent(in) :: key
     integer, intent(in), dimension(:) :: dims
@@ -256,10 +248,6 @@ module smartredis_mpi
       if(is_error) stop 'Error in SmartRedis put_real_scalar.'
     end if
   end subroutine put_real_scalar
-  !
-
-
-
 
   subroutine finalize_smartredis_mpi()
     implicit none
